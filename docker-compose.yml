@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      - CHAMILO_DB_HOST=db
+      - CHAMILO_DB_USER=chamilo
+      - CHAMILO_DB_PASSWORD=chamilo_secret_password
+      - CHAMILO_DB_NAME=chamilo
+    volumes:
+      - app_config:/var/www/html/app/config
+      - app_courses:/var/www/html/app/courses
+      - app_upload:/var/www/html/app/upload
+      - app_home:/var/www/html/app/home
+      - app_session:/var/www/html/app/session
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_secret_password
+      - MYSQL_DATABASE=chamilo
+      - MYSQL_USER=chamilo
+      - MYSQL_PASSWORD=chamilo_secret_password
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+
+volumes:
+  app_config:
+  app_courses:
+  app_upload:
+  app_home:
+  app_session:
+  db_data:
